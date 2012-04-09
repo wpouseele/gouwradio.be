@@ -1,0 +1,26 @@
+# Define any application specific rules to your models here
+# such as routing, partials, etc.
+
+index:
+  index:
+    encoding: UTF-8
+    cultures: [en]
+    host: 127.0.0.1
+    port: 8983
+    base_url: "/solr"
+    
+  models:
+    Song:
+      fields:
+        id: 
+          stored: true
+        song_name:
+          stored: true
+        artist_name:
+          stored: true
+        album_name:
+          stored: true
+        genre_name:
+          stored: true
+        tags:
+          stored: true

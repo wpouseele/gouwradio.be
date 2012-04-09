@@ -1,0 +1,6 @@
+*.class
+*.pyc
+*.pyo
+.settings
+.DS_Store
+.project

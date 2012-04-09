@@ -1,0 +1,219 @@
+Album:
+  connection: doctrine
+  tableName: album
+  columns:
+    id:
+      type: integer
+      primary: true
+      autoincrement: true
+    scan_id:
+      type: integer
+    name:
+      type: string(255)
+      unique: true
+    mtime:
+      type: integer
+    amazon_flagged:
+      type: integer(1)
+      default: 0
+    meta_flagged:
+      type: integer(1)
+      default: 0
+    folders_flagged:
+      type: integer(1)
+      default: 0 
+    has_art:
+      type: integer(1)
+      default: 0    
+
+Artist:
+  connection: doctrine
+  tableName: artist
+  columns:
+    id:
+      type: integer
+      primary: true
+      autoincrement: true
+    name:
+      type: string(255)   
+     
+Genre:
+  connection: doctrine
+  tableName: genre
+  columns:
+    id:
+      type: integer
+      primary: true
+      autoincrement: true
+    name:
+      type: string(255)
+   
+
+SongGenres:
+  connection: doctrine
+  tableName: song_genres
+  columns:
+    id:
+      type: integer
+      primary: true
+      autoincrement: true
+    song_id:
+      type: integer
+    genre_id:
+      type: integer
+  indexes:
+    song_id_index:
+      fields: [song_id]
+  relations:
+    Genre:
+      local: genre_id
+    Song:
+      local: song_id
+  attributes:
+    export: table
+      
+Playlist:
+  connection: doctrine
+  tableName: playlist
+  columns:
+    id:
+      type: integer
+      primary: true
+      autoincrement: true
+    scan_id:
+      type: integer
+    service_name:
+      type: string(255)
+    service_unique_id:
+      type: string(255)    
+    name:
+      type: string(255)
+    mtime:
+      type: integer
+
+PlaylistFiles:
+  connection: doctrine
+  tableName: playlist_files
+  columns:
+    id:
+      type: integer
+      primary: true
+      autoincrement: true
+    playlist_id:
+      type: integer
+      default: 0
+    filename:
+      type: text
+    orderfield:
+      type: integer
+
+Scan:
+  connection: doctrine
+  tableName: scan
+  columns:
+    id:
+      type: integer
+      primary: true
+      autoincrement: true
+    scan_time:
+      type: string(255)
+    scan_type:
+      type: string(255)
+  indexes:
+    scan_type_index:
+      fields: [scan_type]
+      
+Song:
+  connection: doctrine
+  tableName: song
+  columns:
+    id:
+      type: integer
+      primary: true
+      autoincrement: true
+    scan_id:
+      type: integer
+      default: '0'
+    unique_id:
+      type: string(255)
+    artist_id:
+      type: integer
+      default: 0
+    album_id:
+      type: integer
+      default: 0
+    name:
+      type: string(255)
+    length:
+      type: string(255)
+    accurate_length:
+      type: integer
+      default: 0
+    filesize:
+      type: integer
+      default: 0
+    bitrate:
+      type: integer
+      default: 0
+    yearpublished:
+      type: integer
+      default: 1969
+    tracknumber:
+      type: integer
+      default: 1
+    label:
+      type: string(255)
+    isremix:
+      type: integer(1)
+      default: 0
+    mtime:
+      type: integer
+    atime:
+      type: integer
+    filename:
+      type: text
+    comments:
+      type: text
+  indexes:
+    album_index:
+      fields: [album_id]
+    artist_index:
+      fields: [artist_id]
+    unique_id_index:
+      fields: [unique_id]
+    scan_id:
+      fields: [scan_id]
+    songname_index:
+      fields: [name]
+    isremix_index:
+      fields: [isremix]
+    songmtime_index:
+      fields: [mtime]
+    songyearpublished_index:
+      fields: [yearpublished]
+    songlength_index:
+      fields: [length]
+    tracknumber_index:
+      fields: [tracknumber]
+
+EchonestProperties:
+  connection: doctrine
+  tableName: echonest_properties
+  columns:
+    id:
+      type: integer
+      primary: true
+      autoincrement: true
+    song_id:
+      type: integer
+    name:
+      type: string(255)
+    value:
+      type: string(255)
+  indexes:
+    song_index:
+      fields: [song_id]
+      
+options:
+  collate: utf8_unicode_ci
+  charset: utf8

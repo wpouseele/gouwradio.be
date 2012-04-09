@@ -1,0 +1,60 @@
+Options +FollowSymLinks +ExecCGI
+DirectoryIndex index.php 
+
+<IfModule mod_headers.c>
+  # no need for ETags if we can modify the headers for forever caches
+  FileETag None
+  
+  # cache images and flash bits
+  <FilesMatch "\.(ico|jpg|jpeg|png|gif|css)$">
+    Header unset Cookie
+    Header set Cache-Control "max-age=86040000, private, must-revalidate"
+  </FilesMatch>
+  
+  # cache css/js but retain cookies
+  <FilesMatch "\.(js|swf)$">
+    Header unset Last-Modified
+    Header set Cache-Control "max-age=72000000, private, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_expires.c>
+  #make favicons cachable
+  AddType image/x-icon .ico
+  ExpiresActive On
+  ExpiresByType image/x-icon A2592000
+</IfModule>
+
+<IfModule mod_deflate.c>
+  #Use Deflate compression if available
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Media Proxy Rules
+  RewriteRule ^play/([a-zA-Z0-9.]+|all)$ proxy_play.php?unique_song_id=$1 [QSA,L]
+  RewriteRule ^client_dev.php/play/([a-zA-Z0-9]+|all)$ proxy_play.php?unique_song_id=$1 [QSA,L]
+
+  # Art proxy rules
+  RewriteRule ^art/([a-zA-Z0-9]+|all)/([a-zA-Z0-9]+|all)$ proxy_art.php?hash=$1&size=$2 [L]
+  RewriteRule ^client_dev.php/art/([a-zA-Z0-9]+|all)/([a-zA-Z0-9]+|all)$ proxy_art.php?hash=$1&size=$2 [L]
+  
+  # uncomment the following line, if you are having trouble
+  # getting no_script_name to work
+  # RewriteBase /
+
+  # we skip all files with .something
+  RewriteCond %{REQUEST_URI} \..+$
+  RewriteCond %{REQUEST_URI} !\.html$
+  RewriteRule .* - [L]
+
+  # we check if the .html version is here (caching)
+  RewriteRule ^$ index.html [QSA]
+  RewriteRule ^([^.]+)$ $1.html [QSA]
+  RewriteCond %{REQUEST_FILENAME} !-f
+
+  # no, so we redirect to our front web controller
+  RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>

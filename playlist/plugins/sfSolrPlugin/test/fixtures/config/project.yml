@@ -1,0 +1,38 @@
+testLucene:
+  models:
+    FakeModel:
+      fields:
+        id:
+        title: 
+          type: text
+          omitNorms: true
+        description:
+          type: text
+          boost: 3
+      title: title
+      description: description
+      categories: [Forum]
+      route: "forum/showForum?id=%id%"
+      validator: isIndexable
+      rebuild_limit: 5
+      peer: FakeForumTable
+      partial: forumResult
+  index:
+    encoding: UTF-8
+    cultures: [en, fr]
+    analyzer: 'utf8num'
+    case_sensitive: false
+    mb_string: true
+
+  interface:
+    categories: true
+    advanced: true
+
+barLucene:
+  models:
+    FakeModel: ~
+
+# we cannot have an empty value for fooLucene (ie: fooLucene: ~)
+fooLucene: 
+  models: ~
+  index: ~
