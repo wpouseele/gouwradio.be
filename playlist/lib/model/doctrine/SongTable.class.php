@@ -343,10 +343,12 @@ class SongTable extends Doctrine_Table
                         2 => ' album.name ' . $order_by . ', song.tracknumber ASC ',
                         3 => ' artist.name ' . $order_by . ', album.name DESC, song.tracknumber ASC ',
                         4 => ' album_mtime ' . $order_by .  ', album.id, song.tracknumber ASC ',
-                        5 => ' song.yearpublished ' . $order_by . ', album.name DESC, song.tracknumber ASC ',
+                        5 => ' song.bitrate ' . $order_by,
+                        6 => ' song.yearpublished ' . $order_by . ', album.name DESC, song.tracknumber ASC ',
                         6 => ' song.accurate_length ' . $order_by,
-                        7 => ' song.tracknumber ' . $order_by,
-                        8 => ' ' . $expression . ' '
+                        8 => ' song.tracknumber ' . $order_by,
+                        9 => ' ' . $expression . ' ',
+                        10 => ' orderfield ' . $order_by
                      );
     unset( $expression );
     $order_by_string = $column_sql[ (int) $settings[ 'sortcolumn' ] ];
@@ -354,8 +356,15 @@ class SongTable extends Doctrine_Table
     $parameters = array();
     
     $query  = 'SELECT ';
-    $query .= ' song.unique_id, song.name, album.name as album_name, artist.name as artist_name, song.mtime as date_modified, song.yearpublished, song.length, song.tracknumber, song.filename, ROUND( song.mtime / 20000 ) as album_mtime ';
-    $query .= 'FROM ';
+	if( !is_null( $settings['playlist_id'] ) )
+    {
+      $query .= ' song.unique_id, song.name, album.name as album_name, artist.name as artist_name, song.mtime as date_modified, song.bitrate as bitrate, song.yearpublished, song.length, song.tracknumber, song.filename, ROUND( song.mtime / 20000 ) as album_mtime, playlist_files.orderfield as orderfield ';
+    }
+	else {
+	  // if we don't have a playlist, set the ordernumber to the track number. This way, be deal with a same number of columns
+	  $query .= ' song.unique_id, song.name, album.name as album_name, artist.name as artist_name, song.mtime as date_modified, song.bitrate as bitrate, song.yearpublished, song.length, song.tracknumber, song.filename, ROUND( song.mtime / 20000 ) as album_mtime, song.tracknumber as orderfield ';
+	}
+	$query .= 'FROM ';
     if( !is_null( $settings['playlist_id'] ) )
     {
       $query .= ' playlist_files, ';
@@ -489,7 +498,7 @@ class SongTable extends Doctrine_Table
     $query .= (int) $settings[ 'offset' ];
     $dbh = Doctrine_Manager::getInstance()->getCurrentConnection()->getDbh();
     $stmt = $dbh->prepare( $query );
-    //echo "$query\r\n";
+    // echo "$query\r\n";
     $success = $stmt->execute( $parameters );
     if( $success )
     {

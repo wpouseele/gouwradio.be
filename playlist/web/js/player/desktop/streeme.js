@@ -118,7 +118,6 @@ streeme = {
 		/**************************************************		
 		 * Setup the JQuery Datatables UI Component       *
 		 **************************************************/
-        
 		var oTable = $('#songlist').dataTable
 		( 
 			{
@@ -157,14 +156,17 @@ streeme = {
 					null,
 					null,
 					null,
+					{ "sClass" : "song_id" },
+					{ "sClass" : "minor", "bSortable": false },
+					{ "sClass" : "minor", "bSortable": false },
+					{ "sClass" : "minor left", "bSortable": false },
 					{ "sClass" : "minor" },
-					{ "sClass" : "minor" },
-					{ "sClass" : "minor left" },
-					{ "sClass" : "minor" },
-					{ "sClass" : "song_id" }
+					{ "sClass" : "song_id" },
+					{ "sClass" : "minor" }
 				],
 				/* default sorting by newest songs */
-				"aaSorting": [[ 4, "desc" ]],
+                "aaSorting": [[ 4, "desc" ]],
+				
 							
 				"fnRowCallback" : function( nRow, aData, iDisplayIndex )
 				{
@@ -219,6 +221,18 @@ streeme = {
 						$( '.dp' ).attr( 'title', deletefromplaylist );
 					}
 					
+					// add tooltips for playlist move up buttons
+					if ( $( '.mu' ) )
+					{
+						$( '.mu' ).attr( 'title', moveupinplaylist );
+					}
+					
+					// add tooltips for playlist move down buttons
+					if ( $( '.md' ) )
+					{
+						$( '.md' ).attr( 'title', movedowninplaylist );
+					}
+					
 					//add tooltips for playlist delete buttons
 					if ( $( '.ps' ) )
 					{
@@ -248,9 +262,8 @@ streeme = {
         oSettings._iDisplayLength = parseInt(results_per_page);
         oTable.fnDraw();
         streeme.iDisplayLength = results_per_page;
-		
-		
-		/**************************************************		
+        
+        /**************************************************		
 		 * Read and setup cookie based ui  settings       *
 		 **************************************************/
 		if( $.cookie('modify_bitrate') )
@@ -400,6 +413,7 @@ streeme = {
 		 * Register event timers                          *
 		 **************************************************/
 		setInterval( streeme.playSongInQueue, 1000 );
+
 	},
 
 	/**
@@ -1066,6 +1080,7 @@ streeme = {
     );
 	},
 	
+	
 	/**
 	* Remove an item from the current playlist
 	* @id 	 id   str: key for the song to remove
@@ -1081,16 +1096,73 @@ streeme = {
 				context: document.body,
 				success: function()
 				{
-      		$( '#dropzone' ).text( deleteItemSuccess ).show( 80 ).delay( 1500 ).hide( 80 );
-      		$( '#songlist_filter > input' ).trigger('keyup');
+      				$( '#dropzone' ).text( deleteItemSuccess ).show( 80 ).delay( 1500 ).hide( 80 );
+       				$( '#songlist_filter > input' ).trigger('keyup');
+       				// refresh the songlist
+					streeme.refreshSongList();
     		},
     		error: function()
     		{
     			$( '#dropzone' ).text( deleteItemError ).show( 80 ).delay( 1500 ).hide( 80 ); 
     		}
     	}
-    );
+    	);
 	},
+	
+	/**
+	* Move an item up the current playlist
+	* @id	id	str: key for the song to move up
+	*/
+	moveuppls : function( id )
+	{
+		$.ajax
+		(
+			{
+				url: javascript_base + '/service/moveUpPlaylistContent',
+				data: ({ 'playlist_id' : streeme.playingPlaylist, 'id' : id }),
+				type: "POST",
+				context: document.body,
+				success: function()
+				{
+		      		$( '#dropzone' ).text( moveupItemSuccess ).show( 80 ).delay( 1500 ).hide( 80 );
+		      		$( '#songlist_filter > input' ).trigger('keyup');
+		      		streeme.refreshSongList();
+		    	},
+		    	error: function()
+		    	{
+		    		$( '#dropzone' ).text( moveupItemError ).show( 80 ).delay( 1500 ).hide( 80 ); 
+				}
+			}
+		);
+	},
+	
+	/**
+	* Move an item down the current playlist
+	* @id	id	str: key for the song to move down
+	*/
+	movedownpls : function( id )
+	{
+		$.ajax
+		(
+			{
+				url: javascript_base + '/service/moveDownPlaylistContent',
+				data: ({ 'playlist_id' : streeme.playingPlaylist, 'id' : id }),
+				type: "POST",
+				context: document.body,
+				success: function()
+				{
+		      		$( '#dropzone' ).text( movedownItemSuccess ).show( 80 ).delay( 1500 ).hide( 80 );
+		      		$( '#songlist_filter > input' ).trigger('keyup');
+		      		streeme.refreshSongList();
+		    	},
+		    	error: function()
+		    	{
+		    		$( '#dropzone' ).text( movedownItemError ).show( 80 ).delay( 1500 ).hide( 80 ); 
+				}
+			}
+		);
+	},
+	
 	
 	/**
 	* Add a playlist
@@ -1166,6 +1238,16 @@ streeme = {
 	    		}
 	    	}
 	    );
+	},
+	
+	/**
+	 * Refresh the songs in a playlist 
+	 */
+	refreshSongList : function()
+	{
+		var oTable = $('#songlist').dataTable();
+  		oTable.fnClearTable(0);
+		oTable.fnDraw();
 	},
 	
 	/**

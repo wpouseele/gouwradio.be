@@ -1,0 +1,16 @@
+GouwRadio Web Server
+====================
+
+== Purpose ==
+
+Based on the Streeme project (www.streeme.com)
+
+== To Do ==
+- view waveform of played song
+- make security login optional
+
+== Completed ==
+- be able to replace paths, not only on windows
+- load multiple itunes xml files
+- show bitrate instead of modfied date in playlist view
+- be able to change order of items in playlist

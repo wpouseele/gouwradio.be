@@ -68,10 +68,16 @@ $(document).ready(function()
   appExitMessage = "<?php echo __( 'Are you sure you want to quit the Streeme desktop application?' ) ?>";
   addtoplaylist = "<?php echo __( 'Click to add to current playlist' ) ?>";
   deletefromplaylist = "<?php echo __( 'Click to remove this song from the playlist' ) ?>";
+  moveupinplaylist = "<?php echo __( 'Click to move this song up the playlist' ) ?>";
+  movedowninplaylist = "<?php echo __( 'Click to move this song down the playlist' ) ?>";
   addItemSuccess = "<?php echo __( 'Item(s) added to playlist' ) ?>";
   addItemError = "<?php echo __( 'Error! Did you select a playlist first?' ) ?>";
   deleteItemSuccess = "<?php echo __( 'Item deleted from the active playlist' ) ?>";
   deleteItemError = "<?php echo __( 'Error! Streeme reported an error. Song not deleted.' ) ?>";
+  moveupItemSuccess = "<?php echo __( 'Item moved up the active playlist' ) ?>";
+  moveupItemError = "<?php echo __( 'Error! Streeme reported an error. Song not moved.' ) ?>";
+  movedownItemSuccess = "<?php echo __( 'Item moved down the active playlist' ) ?>";
+  movedownItemError = "<?php echo __( 'Error! Streeme reported an error. Song not moved.' ) ?>";
   playlistNameInput = "<?php echo __( 'Please specify a name for the new playlist' ) ?>";
   addPlaylistSuccess = "<?php echo __( 'Added New Playlist' ) ?>";
   addPlaylistError = "<?php echo __( 'Error! Playlist not created.' ) ?>";

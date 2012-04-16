@@ -4,3 +4,6 @@
 .settings
 .DS_Store
 .project
+playlist/apps/client/config/app.yml
+playlist/config/databases.yml
+playlist/lib/vendor/symfony

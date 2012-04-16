@@ -42,13 +42,13 @@ class listSongsAction extends sfAction
              );
     $result_count = $result_list = null;
     $result = Doctrine_Core::getTable('Song')->getList( $args, $result_count, $result_list );
-
+	
     $song_array    = $result_list;
     $found_rows    = $result_count;
     $total_library = Doctrine_Core::getTable('Song')->getTotalSongCount();
-    
 
     $this->content = $this->to_json_dataTable( $song_array, $found_rows, $total_library );
+	
     sfConfig::set('sf_web_debug', false);
     $this->setTemplate('output');
     $this->setLayout(false);
@@ -65,13 +65,14 @@ class listSongsAction extends sfAction
   {
     $flattened = array();
     $count = 0;
-    $empty_resultset[] = array( "", "No Matches Found...", "", "", "", "", "", "", "" );
+    $empty_resultset[] = array( "", "No Matches Found...", "", "", "", "", "", "", "", "", "" );
     if ( is_array( $song_array ) )
     {
        foreach ( $song_array as $k => $v)
        {
           $string = null;
           $unique_id = null;
+		  $order = null;
           $jplayer_types = array (
                                     '.mp3' => 'mp3',
                                     '.m4a' => 'm4a',
@@ -84,6 +85,8 @@ class listSongsAction extends sfAction
           foreach ( $v as $key => $value)
           {
              $addtoplaylistbutton = null;
+			 $moveupinplaylistbutton = null;
+			 $movedowninplaylistbutton = null;
              $playsongbutton = null;
              if( $key == 'total_matches' )
              {
@@ -100,6 +103,8 @@ class listSongsAction extends sfAction
              if( $key == 'name' && !( strpos(  $this->sSearch, 'playlistid:' ) === false ) )
              {
                 $addtoplaylistbutton = '<div class="dp" onclick="streeme.delpls( \'' . $unique_id . '\'  )"></div>';
+				$moveupinplaylistbutton = '<div class="mu" onclick="streeme.moveuppls( \'' . $unique_id . '\'  )"></div>';
+				$movedowninplaylistbutton = '<div class="md" onclick="streeme.movedownpls( \'' . $unique_id . '\'  )"></div>';
              }
              if( $key == 'name' && strpos(  $this->sSearch, 'playlistid:' ) === false )
              {
@@ -108,6 +113,10 @@ class listSongsAction extends sfAction
              if( $key == 'date_modified')
              {
                $value = ( $value ) ? date( 'Y-m-d', $value ) : '--';
+             }
+			 if( $key == 'bitrate')
+			 {
+               $value = ( $value ) ? $value : '--';
              }
              if( $key == 'yearpublished' )
              {
@@ -130,7 +139,11 @@ class listSongsAction extends sfAction
              {
               continue;
              }
-             $string .= ( ( $value ) ?  $addtoplaylistbutton . $playsongbutton . $value : '0' ) . '%*=*=*%';
+			 if( $key == 'orderfield' )
+             {
+               $value = ( $value ) ? $value : '0';
+             }
+			 $string .= ( ( $value ) ?  $addtoplaylistbutton . $moveupinplaylistbutton . $movedowninplaylistbutton . $playsongbutton . $value : '0' ) . '%*=*=*%';
           }
           $convert = explode( '%*=*=*%', rtrim( $string, '%*=*=*%' ) );
           $flattened[ $count ] = $convert;

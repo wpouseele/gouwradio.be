@@ -43,19 +43,26 @@ class PlaylistFilesTable extends Doctrine_Table
   {
     if( is_array( $filename_list ) && count( $filename_list ) > 0 )
     {
-      foreach( $filename_list as $row )
-      {
-        if ( !$this->isFileInPlaylist( $playlist_id, $row[ 'filename' ] ) )
-        {
-          $playlist_file = new PlaylistFiles();
-          $playlist_file->playlist_id = $playlist_id;
-          $playlist_file->filename = $row[ 'filename' ];
-          $playlist_file->save();
-          $playlist_file->free();
-          unset($playlist_file);
-        }
-      }
-      return true;
+    	
+      	foreach( $filename_list as $row )
+	    {
+	      // get highest orderfield defined in the playlist
+		  $maxorder = $this->getMaxOrder($playlist_id);
+		
+	      if ( !$this->isFileInPlaylist( $playlist_id, $row[ 'filename' ] ) )
+	      {
+         	$playlist_file = new PlaylistFiles();
+		    $playlist_file->playlist_id = $playlist_id;
+	        $playlist_file->filename = $row[ 'filename' ];
+			$playlist_file->orderfield = $maxorder + 1;
+	        $playlist_file->save();
+	        $playlist_file->free();
+	        unset($playlist_file);
+	      }
+		  unset($maxorder);
+	    }
+		
+	    return true;
     }
     else
     {
@@ -99,12 +106,21 @@ class PlaylistFilesTable extends Doctrine_Table
     $song = Doctrine_Core::getTable( 'Song' )->getSongByUniqueId( $unique_song_id );
     if ( is_object( $song ) )
     {
-      $q = Doctrine_Query::create()
+      // not only delete the song but also update the order of the rest of the songs in the playlist with a order higher than the current song
+	  // use a transaction so we can roll back if something goes wrong
+	  $currentSong = Doctrine_Core::getTable( 'PlaylistFiles' )->findOneByFilename( $song->filename );
+	  $q2 = Doctrine_Query::create()
+	          ->update('PlaylistFiles pf')
+	          ->set('pf.orderfield','pf.orderfield - 1' )
+	          ->where('pf.orderfield > ?', $currentSong->orderfield)
+	          ->execute();
+	  $q = Doctrine_Query::create()
         ->delete( 'PlaylistFiles pf' )
         ->where( 'pf.playlist_id = ?', $playlist_id )
         ->andWhere( 'pf.filename = ?', $song->filename )
         ->execute();
-      return $q;
+
+	  return $q; 
     }
     else
     {
@@ -127,4 +143,95 @@ class PlaylistFilesTable extends Doctrine_Table
       ->execute();
     return $qpf;
    }
+   
+   /**
+    * Move up a file in the playlist
+    * @param playlist_id     int: playlist id
+    * @param $unique_song_id str: unique song id
+    * @return                int: affected records
+    */
+   	public function moveUpPlaylistFile( $playlist_id, $unique_song_id)
+   	{
+		$song = Doctrine_Core::getTable( 'Song' )->getSongByUniqueId( $unique_song_id );
+		if ( is_object( $song ) )
+    	{
+    		$max = PlaylistFilesTable::getMaxOrder($playlist_id);
+    		$current = Doctrine_Core::getTable( 'PlaylistFiles' )->findOneByFilename( $song->filename );
+			// if we are already at the top, exit
+			if ($current->orderfield == 1 ) return 0; 
+			$previous = Doctrine_Core::getTable( 'PlaylistFiles' )->findOneByOrderfield( $current->orderfield - 1 );
+			$current_order = $current->orderfield;
+			$previous_order = $previous->orderfield;
+			$current->orderfield = $previous_order;
+			$previous->orderfield = $current_order; 
+			$current->save();
+	        $previous->save();
+			
+			return 1;
+    	}
+	    else
+	    {
+	      return 0;
+	    }
+   	}
+
+	/**
+    * Move down a file in the playlist
+    * @param playlist_id     int: playlist id
+    * @param $unique_song_id str: unique song id
+    * @return                int: affected records
+    */
+   	public function moveDownPlaylistFile( $playlist_id, $unique_song_id)
+   	{
+		$song = Doctrine_Core::getTable( 'Song' )->getSongByUniqueId( $unique_song_id );
+		if ( is_object( $song ) )
+    	{
+    		$max = PlaylistFilesTable::getMaxOrder($playlist_id);
+    		$current = Doctrine_Core::getTable( 'PlaylistFiles' )->findOneByFilename( $song->filename );
+			// if we are already at the bottom, exit
+			if ($current->orderfield == $max) return 0;
+			$next = Doctrine_Core::getTable( 'PlaylistFiles' )->findOneByOrderfield( $current->orderfield + 1 );
+			$current_order = $current->orderfield;
+			$next_order = $next->orderfield;
+			$current->orderfield = $next_order;
+			$next->orderfield = $current_order; 
+			$current->save();
+	        $next->save();
+			
+			return 1;
+    	}
+	    else
+	    {
+	      return 0;
+	    }
+   	}
+	
+	/**
+	 * Get the maximum order of a playlist
+	 * @param playlist_id	int: playlist id
+	 * @return				int: highest order
+	 */
+	public static function getMaxOrder($playlist_id)
+	{
+	  $order = 0;
+	  if (!is_numeric($playlist_id)) {
+	    return $order;
+	  }
+	  $record = Doctrine_Query::create()
+	              ->select('MAX(plf.orderfield)')
+	              ->from('PlaylistFiles plf')
+	              ->where('plf.playlist_id = ?', $playlist_id)
+	              ->fetchArray();
+	 
+	  if (count($record) != 1) {
+	    return $order;
+	  } else {
+	    if (isset($record[0]['MAX'])) {
+	      $order = $record[0]['MAX'];
+	    }
+	  }
+	 
+	  return $order;
+	}
+	
 }

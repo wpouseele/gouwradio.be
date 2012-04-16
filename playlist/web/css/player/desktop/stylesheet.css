@@ -169,11 +169,52 @@ div.horizontalrule
 	cursor: pointer;
 	background-position: 0 -42px;
 	overflow: hidden;
-	margin: 0 7px 0 2px;
+	margin: 0 2px 0 2px;
 }
 .dp:hover
 {
 	background-position: -14px -42px;
+}
+.mu
+{
+	position: relative;
+	float: left;
+	width: 14px;
+	display:table-cell;
+	vertical-align:top;
+	height: 14px;
+	background: url( /images/player/desktop/h6-button-playlistsprite.png ) no-repeat;
+	cursor: pointer;
+	background-position: 0 0;
+	overflow: hidden;
+	margin: 0 0 0 0;
+}
+.mu:hover
+{
+	background-position: -14px 0;
+}
+.md
+{
+	position: relative;
+	float: left;
+	width: 14px;
+	display:table-cell;
+	vertical-align:top;
+	height: 14px;
+	background: url( /images/player/desktop/h6-button-playlistsprite.png ) no-repeat;
+	cursor: pointer;
+	background-position: 0 -14px;
+	overflow: hidden;
+	margin: 0 7px 0 2px;
+}
+.md:hover
+{
+	background-position: -14px -14px;
+}
+.hideSongMove
+{
+	/* display: none; */
+	color: red;
 }
 .ps
 {

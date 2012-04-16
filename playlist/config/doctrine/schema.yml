@@ -106,6 +106,7 @@ PlaylistFiles:
       type: text
     orderfield:
       type: integer
+      default: 0
 
 Scan:
   connection: doctrine
