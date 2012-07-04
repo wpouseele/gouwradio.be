@@ -7,3 +7,6 @@
 playlist/apps/client/config/app.yml
 playlist/config/databases.yml
 playlist/lib/vendor/symfony
+sms/library/Doctrine
+sms/library/Symfony
+sms/library/Zend

@@ -1,0 +1,17 @@
+<h2>Berichtjes</h2>
+<?php if($this->noBerichtjes) { ?>
+Er zijn geen ongelezen berichtjes
+<?php } else { ?>
+	
+<ul data-role="listview" data-filter="true" data-inset="true">
+	<?php foreach ($this->berichtjes as $key => $berichtje) { ?>
+		<li>
+			<a href="/berichtjes/detail/id/<?php echo $berichtje->getId();?>/">
+				<?php echo $this->DateFromEpoch()->epoch($berichtje->getDate()); ?>
+				&nbsp;&nbsp;&nbsp;
+				<?php echo $berichtje->getText(); ?>
+			</a>
+		</li>
+	<?php } ?>
+</ul>
+<?php } ?>

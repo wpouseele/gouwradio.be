@@ -1,0 +1,50 @@
+/* 
+ * Custom CSS for gouwradio website
+ *
+ * Author: wimp
+ */
+ 
+ 
+ /* TopNavigation icons */
+ .ui-icon-my-twitter {
+     background:#fff;
+     background-repeat:no-repeat;
+     background-image:url('/images/twitter.png');
+ }
+ 
+ .ui-icon-my-verzoekje {
+     background:rgba(255,255,255,.3);
+     background-repeat:no-repeat;
+     background-image:url('/images/verzoekje.png');
+ }
+ 
+ .ui-icon-my-bericht {
+     background:rgba(255,255,255,.3);
+     background-repeat:no-repeat;
+     background-image:url('/images/bericht.png');
+ }
+ 
+ .ui-icon-my-alles {
+     background:rgba(255,255,255,.3);
+     background-repeat:no-repeat;
+     background-image:url('/images/alles.png');
+ }
+ 
+ .nieuw-hour {
+     float: left;
+     padding: 0 50px 0 0;
+ }
+ 
+ .nieuw-phoneNumber {
+     padding: 0 0 0 100px;
+ }
+ 
+ .nieuw-text {
+     float: left;
+     padding: 10px 0 0 0;
+ }
+ 
+/* Align the buttons on the home page right */
+.ui-controlgroup {
+     text-align: right;
+ }

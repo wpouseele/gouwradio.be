@@ -1,0 +1,17 @@
+<h2>Verzoekjes</h2>
+<?php if($this->noVerzoekjes) { ?>
+Er zijn geen ongelezen verzoekjes
+<?php } else { ?>
+
+<ul data-role="listview" data-filter="true" data-inset="true">
+	<?php foreach ($this->verzoekjes as $key => $verzoekje) { ?>
+		<li>
+			<a href="/verzoekjes/detail/id/<?php echo $verzoekje->getId();?>/">
+				<?php echo $this->DateFromEpoch()->epoch($verzoekje->getDate()); ?>
+				&nbsp;&nbsp;&nbsp;
+				<?php echo $verzoekje->getText(); ?>
+			</a>
+		</li>
+	<?php } ?>
+</ul>
+<?php } ?>

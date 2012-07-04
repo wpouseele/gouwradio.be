@@ -1,0 +1,16 @@
+<h2>Twitter search op gouwradio</h2>
+<?php if($this->noTwitterResult) { ?>
+Geen recente Twitter resultaten.
+<?php } else { ?>
+<ul data-role="listview" data-filter="true" data-split-icon="gear" data-split-theme="d">
+	<?php foreach ($this->twitterSearch['results'] as $result) { ?>
+	    <li>
+            <a href="index.html">
+                <img src="<?php echo $result['profile_image_url'] ?>" />
+                <h3><?php echo $result['from_user'] ?></h3>
+                <p><?php echo $result['text'] ?></p>
+            </a>
+	    </li>
+	<?php } ?>
+</ul>
+<?php } ?>
